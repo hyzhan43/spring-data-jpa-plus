@@ -45,7 +45,7 @@ public class UserTest {
     }
 
     /**
-     *  测试 查询 user, 如果name 是 有值，则添加到查询条件 正常查询
+     * 测试 查询 user, 如果name 是 有值，则添加到查询条件 正常查询
      */
     @Test
     public void test_get_user_by_name() {
@@ -63,7 +63,7 @@ public class UserTest {
     }
 
     /**
-     *  测试 repository 添加 @Dynamic 注解返回 Optional值
+     * 测试 repository 添加 @Dynamic 注解返回 Optional值
      */
     @Test
     public void test_get_user_by_name_and_return_optional() {
@@ -89,5 +89,32 @@ public class UserTest {
         Integer sex = 99;
         List<User> userList = userRepository.getByNameAndSex(name, sex);
         assertThat(userList).isEmpty();
+    }
+
+    /**
+     * 测试between注解, 正常查询
+     */
+    @Test
+    public void test_get_user_by_age_between_10_and_20() {
+        List<User> userList = userRepository.findByAgeBetween(15, 25);
+        assertThat(userList.size()).isEqualTo(1);
+    }
+
+    /**
+     * 测试between注解, begin, end 均为null值, 则查询全部
+     */
+    @Test
+    void test_get_user_by_age_between_null() {
+        List<User> userList = userRepository.findByAgeBetween(null, null);
+        assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
+    }
+
+    /**
+     * 测试between注解, begin, end 其中一个为null值, 则查询全部
+     */
+    @Test
+    void test_get_user_by_age_between_one_null() {
+        List<User> userList = userRepository.findByAgeBetween(null, 25);
+        assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
     }
 }

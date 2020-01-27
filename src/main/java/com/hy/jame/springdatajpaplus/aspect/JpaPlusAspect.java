@@ -1,5 +1,6 @@
 package com.hy.jame.springdatajpaplus.aspect;
 
+import com.hy.jame.springdatajpaplus.annotation.Between;
 import com.hy.jame.springdatajpaplus.dynamic.JpaPlusDynamicManager;
 import com.hy.jame.springdatajpaplus.repository.JpaPlusRepository;
 import com.hy.jame.springdatajpaplus.utils.Log;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -97,14 +99,37 @@ public class JpaPlusAspect {
                 String argName = argNames[i];
                 Parameter parameter = parameters[i];
 
-                if (argValue instanceof Pageable || hasIgnoreConditions(argName, argValue, parameter)) {
+                if (argValue instanceof Pageable) {
                     continue;
                 }
 
-                // 获取比较的属性
-                Path namePath = root.get(argName);
-                Predicate predicate = criteriaBuilder.equal(namePath, argValue);
-                predicatesList.add(predicate);
+                if (parameter.isAnnotationPresent(Between.class)) {
+                    Between between = parameter.getAnnotation(Between.class);
+                    argName = between.value();
+
+                    Path namePath = root.get(argName);
+
+                    i++;
+                    Parameter nextParameter = parameters[i];
+                    Comparable nextArgValue = (Comparable) argValues[i];
+
+                    if (hasIgnoreConditions(argName, argValue, parameter) || hasIgnoreConditions(argName, nextArgValue, nextParameter)) {
+                        continue;
+                    }
+
+                    @SuppressWarnings("unchecked")
+                    Predicate predicate = criteriaBuilder.between(namePath, (Comparable) argValue, nextArgValue);
+                    predicatesList.add(predicate);
+                } else {
+
+                    if (hasIgnoreConditions(argName, argValue, parameter)) {
+                        continue;
+                    }
+
+                    Path namePath = root.get(argName);
+                    Predicate predicate = criteriaBuilder.equal(namePath, argValue);
+                    predicatesList.add(predicate);
+                }
             }
 
             //最终将查询条件拼好然后return

@@ -1,7 +1,9 @@
 package com.hy.jame.springdatajpaplus.repository;
 
+import com.hy.jame.springdatajpaplus.annotation.Between;
 import com.hy.jame.springdatajpaplus.annotation.Dynamic;
 import com.hy.jame.springdatajpaplus.annotation.NotEmpty;
+import com.hy.jame.springdatajpaplus.annotation.NotNull;
 import com.hy.jame.springdatajpaplus.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,4 +31,10 @@ public interface UserRepository extends JpaPlusRepository<User, Long> {
 
     @Dynamic
     Page<User> getPageByName(String name, Pageable pageable);
+
+//    @Dynamic
+//    List<User> findBySexBetween(@Between @NotNull Integer begin,@Between @NotNull Integer end);
+
+    @Dynamic
+    List<User> findByAgeBetween(@Between("age") @NotNull Integer begin,@NotNull @Between("age") Integer end);
 }
