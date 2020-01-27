@@ -9,8 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,51 +26,33 @@ public class UserTest {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * 测试 查询 user, 如果 name为null, 就查询全部
+     */
     @Test
-    public void test_find_user_by_name(){
-        List<User> userList = userRepository.findByName("张三");
-        System.out.println("分割线");
-        List<User> userList2 = userRepository.getByName("张三");
-    }
-
-    @Test
-    public void test_null_predicate_specification() {
-        List<User> userList = getUserByName(null);
+    public void test_get_user_by_null_name() {
+        List<User> userList = userRepository.getByName(null);
         assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
     }
 
+    /**
+     * 测试 查询 user, 如果 name为null或者 ""空串 , 就查询全部
+     */
     @Test
-    public void test_specification() {
-        String name = "李四";
-        List<User> userList = getUserByName(name);
-        assertThat(userList.size()).isEqualTo(1);
+    public void test_get_user_by_empty_name() {
+        List<User> userList = userRepository.getByName("");
+        assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
     }
 
-    private List<User> getUserByName(String name) {
-        return userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            // 获取比较的属性
-            Path<String> namePath = root.get("name");
-            Predicate predicate = null;
-
-            if (name != null && !name.isEmpty()) {
-                predicate = criteriaBuilder.equal(namePath, name);
-            }
-
-            return predicate;
-        });
-    }
-
+    /**
+     *  测试 查询 user, 如果name 是 有值，则添加到查询条件 正常查询
+     */
     @Test
     public void test_get_user_by_name() {
-        String name = null;
+        String name = "张三";
         List<User> userList = userRepository.getByName(name);
-        assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
-
-        name = "张三";
-        userList = userRepository.getByName(name);
         assertThat(userList.size()).isEqualTo(1);
     }
-
 
     @Test
     public void test_get_user_by_name_and_sex() {
@@ -82,15 +62,21 @@ public class UserTest {
         assertThat(userList.size()).isEqualTo(1);
     }
 
+    /**
+     *  测试 repository 添加 @Dynamic 注解返回 Optional值
+     */
     @Test
-    public void test_get_user_by_name_and_return_optional(){
+    public void test_get_user_by_name_and_return_optional() {
         String name = "李四";
         Optional<User> userList = userRepository.getOneByName(name);
         assertTrue(userList.isPresent());
     }
 
+    /**
+     * 测试 repository 添加 @Dynamic 注解返回 page 值
+     */
     @Test
-    public void test_get_user_by_name_and_return_page(){
+    public void test_get_user_by_name_and_return_page() {
         String name = "李四";
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> userPage = userRepository.getPageByName(name, pageable);
@@ -98,7 +84,7 @@ public class UserTest {
     }
 
     @Test
-    public void test_get_user_by_name_and_error_sex(){
+    public void test_get_user_by_name_and_error_sex() {
         String name = "李四";
         Integer sex = 99;
         List<User> userList = userRepository.getByNameAndSex(name, sex);

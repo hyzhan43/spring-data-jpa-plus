@@ -1,6 +1,7 @@
 package com.hy.jame.springdatajpaplus.repository;
 
 import com.hy.jame.springdatajpaplus.annotation.Dynamic;
+import com.hy.jame.springdatajpaplus.annotation.NotEmpty;
 import com.hy.jame.springdatajpaplus.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,7 @@ public interface UserRepository extends JpaPlusRepository<User, Long> {
     List<User> getByNameAndSex(String name, Integer sex);
 
     @Dynamic
-    List<User> getByName(String name);
+    List<User> getByName(@NotEmpty String name);
 
     @Dynamic
     Optional<User> getOneByName(String name);

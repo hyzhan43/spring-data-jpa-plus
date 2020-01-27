@@ -7,12 +7,11 @@ import java.lang.annotation.Target;
 
 /**
  * author: HyJame
- * date:   2020/1/5
- * desc:   TODO
+ * date:   2020/1/27
+ * desc:   非空注解
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Param {
+public @interface NotNull {
 
-    String value() default "";
 }
