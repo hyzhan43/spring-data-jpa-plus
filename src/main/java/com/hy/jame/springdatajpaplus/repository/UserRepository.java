@@ -36,5 +36,17 @@ public interface UserRepository extends JpaPlusRepository<User, Long> {
 //    List<User> findBySexBetween(@Between @NotNull Integer begin,@Between @NotNull Integer end);
 
     @Dynamic
-    List<User> findByAgeBetween(@Between("age") @NotNull Integer begin,@NotNull @Between("age") Integer end);
+    List<User> findByAgeBetween(@Between("age") @NotNull Integer begin,
+                                @Between("age") @NotNull Integer end);
+
+    @Dynamic
+    List<User> findByNameAndAgeBetween(@NotNull String name,
+                                       @Between("age") @NotNull Integer begin,
+                                       @Between("age") @NotNull Integer end);
+
+    @Dynamic
+    Page<User> findByNameAndAgeBetween(@NotNull String name,
+                                       @Between("age") @NotNull Integer begin,
+                                       @Between("age") @NotNull Integer end,
+                                       Pageable pageable);
 }

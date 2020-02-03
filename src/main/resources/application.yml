@@ -1,10 +1,15 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: net.sf.log4jdbc.DriverSpy
     username: root
     password: a1234567
-    url: jdbc:mysql://127.0.0.1:3306/Demo
+#    url: jdbc:mysql://127.0.0.1:3306/Demo
+    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/Demo
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
+
+
+

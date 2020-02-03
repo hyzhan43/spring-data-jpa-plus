@@ -104,7 +104,7 @@ public class UserTest {
      * 测试between注解, begin, end 均为null值, 则查询全部
      */
     @Test
-    void test_get_user_by_age_between_null() {
+    public void test_get_user_by_age_between_null() {
         List<User> userList = userRepository.findByAgeBetween(null, null);
         assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
     }
@@ -113,8 +113,21 @@ public class UserTest {
      * 测试between注解, begin, end 其中一个为null值, 则查询全部
      */
     @Test
-    void test_get_user_by_age_between_one_null() {
+    public void test_get_user_by_age_between_one_null() {
         List<User> userList = userRepository.findByAgeBetween(null, 25);
         assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
+    }
+
+    @Test
+    public void test_get_user_by_name_and_age_between() {
+        List<User> userList = userRepository.findByNameAndAgeBetween(null, 15, 25);
+        assertThat(userList.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void test_get_user_by_name_and_age_between_and_pageable() {
+        Pageable pageable = PageRequest.of(1, 10);
+        Page<User> userList = userRepository.findByNameAndAgeBetween(null, 15, 25, pageable);
+        assertThat(userList.getTotalElements()).isEqualTo(1);
     }
 }

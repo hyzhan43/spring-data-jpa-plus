@@ -1,7 +1,5 @@
 package com.hy.jame.springdatajpaplus.annotation;
 
-import org.springframework.data.jpa.repository.Query;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -9,10 +7,11 @@ import java.lang.annotation.Target;
 
 /**
  * author: HyJame
- * date:   2020/1/5
- * desc:   TODO
+ * date:   2020/1/27
+ * desc:   string 非空注解
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Dynamic {
+public @interface Like {
+
 }
