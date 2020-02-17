@@ -1,7 +1,8 @@
-package com.hy.jame.springdatajpaplus;
+package com.hy.jame.simpledemo;
 
-import com.hy.jame.springdatajpaplus.domain.User;
-import com.hy.jame.springdatajpaplus.repository.UserRepository;
+import com.hy.jame.simpledemo.domain.User;
+import com.hy.jame.simpledemo.repository.UserRepository;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,8 +13,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * author: HyJame
@@ -32,7 +33,7 @@ public class UserTest {
     @Test
     public void test_get_user_by_null_name() {
         List<User> userList = userRepository.getByName(null);
-        assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
+        AssertionsForClassTypes.assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
     }
 
     /**
@@ -41,7 +42,7 @@ public class UserTest {
     @Test
     public void test_get_user_by_empty_name() {
         List<User> userList = userRepository.getByName("");
-        assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
+        AssertionsForClassTypes.assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
     }
 
     /**
@@ -51,7 +52,7 @@ public class UserTest {
     public void test_get_user_by_name() {
         String name = "张三";
         List<User> userList = userRepository.getByName(name);
-        assertThat(userList.size()).isEqualTo(1);
+        AssertionsForClassTypes.assertThat(userList.size()).isEqualTo(1);
     }
 
     @Test
@@ -59,7 +60,7 @@ public class UserTest {
         String name = "李四";
         Integer sex = 1;
         List<User> userList = userRepository.getByNameAndSex(name, sex);
-        assertThat(userList.size()).isEqualTo(1);
+        AssertionsForClassTypes.assertThat(userList.size()).isEqualTo(1);
     }
 
     /**
@@ -80,7 +81,7 @@ public class UserTest {
         String name = "李四";
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> userPage = userRepository.getPageByName(name, pageable);
-        assertThat(userPage.getContent().size()).isEqualTo(1);
+        AssertionsForClassTypes.assertThat(userPage.getContent().size()).isEqualTo(1);
     }
 
     @Test
@@ -88,7 +89,7 @@ public class UserTest {
         String name = "李四";
         Integer sex = 99;
         List<User> userList = userRepository.getByNameAndSex(name, sex);
-        assertThat(userList).isEmpty();
+        assertTrue(userList.isEmpty());
     }
 
     /**
@@ -97,7 +98,7 @@ public class UserTest {
     @Test
     public void test_get_user_by_age_between_10_and_20() {
         List<User> userList = userRepository.findByAgeBetween(15, 25);
-        assertThat(userList.size()).isEqualTo(1);
+        AssertionsForClassTypes.assertThat(userList.size()).isEqualTo(1);
     }
 
     /**
@@ -106,7 +107,7 @@ public class UserTest {
     @Test
     public void test_get_user_by_age_between_null() {
         List<User> userList = userRepository.findByAgeBetween(null, null);
-        assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
+        AssertionsForClassTypes.assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
     }
 
     /**
@@ -115,19 +116,19 @@ public class UserTest {
     @Test
     public void test_get_user_by_age_between_one_null() {
         List<User> userList = userRepository.findByAgeBetween(null, 25);
-        assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
+        AssertionsForClassTypes.assertThat(userList.size()).isEqualTo(userRepository.findAll().size());
     }
 
     @Test
     public void test_get_user_by_name_and_age_between() {
         List<User> userList = userRepository.findByNameAndAgeBetween(null, 15, 25);
-        assertThat(userList.size()).isEqualTo(1);
+        AssertionsForClassTypes.assertThat(userList.size()).isEqualTo(1);
     }
 
     @Test
     public void test_get_user_by_name_and_age_between_and_pageable() {
         Pageable pageable = PageRequest.of(1, 10);
         Page<User> userList = userRepository.findByNameAndAgeBetween(null, 15, 25, pageable);
-        assertThat(userList.getTotalElements()).isEqualTo(1);
+        AssertionsForClassTypes.assertThat(userList.getTotalElements()).isEqualTo(1);
     }
 }

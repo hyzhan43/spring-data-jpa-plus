@@ -1,4 +1,4 @@
-package com.hy.jame.springdatajpaplus.domain;
+package com.hy.jame.simpledemo.domain;
 
 import lombok.Data;
 

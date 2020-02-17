@@ -1,10 +1,11 @@
-package com.hy.jame.springdatajpaplus.repository;
+package com.hy.jame.simpledemo.repository;
 
+import com.hy.jame.simpledemo.domain.User;
 import com.hy.jame.springdatajpaplus.annotation.Between;
 import com.hy.jame.springdatajpaplus.annotation.Dynamic;
 import com.hy.jame.springdatajpaplus.annotation.NotEmpty;
 import com.hy.jame.springdatajpaplus.annotation.NotNull;
-import com.hy.jame.springdatajpaplus.domain.User;
+import com.hy.jame.springdatajpaplus.repository.JpaPlusRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

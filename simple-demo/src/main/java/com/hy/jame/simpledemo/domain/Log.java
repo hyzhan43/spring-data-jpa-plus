@@ -1,6 +1,5 @@
-package com.hy.jame.springdatajpaplus.domain;
+package com.hy.jame.simpledemo.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -48,22 +47,21 @@ public class Log {
     private String method;
 
     /**
-     * 请求路径
+     *  请求路径
      */
     @Column(length = 50)
     private String path;
 
     /**
-     * 访问那个权限
+     *  访问那个权限
      */
     @Column(length = 100)
     private String authority;
 
     /**
-     * 日志创建时间
+     *  日志创建时间
      */
     @Column
     @CreatedDate
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 }
