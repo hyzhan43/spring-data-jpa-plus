@@ -40,12 +40,12 @@ public class LogRepositoryTest {
 
     @Test
     public void test_get_all_logs_with_username() {
-//        Page<Log> logPage = logRepository.getByUsernameAndCreateTimeBetween("hyzhan",
-//                DateUtils.stringFormat("2020-01-27 10:07:44"),
-//                DateUtils.stringFormat("2020-01-27 14:07:44"),
-//                pageable);
-//
-//        assertThat(logPage.getTotalElements()).isEqualTo(1);
+        Page<Log> logPage = logRepository.getByUsernameAndCreateTimeBetween("hyzhan",
+                DateUtils.stringFormat("2020-01-27 10:07:44"),
+                DateUtils.stringFormat("2020-01-27 14:07:44"),
+                pageable);
+
+        assertThat(logPage.getTotalElements(), is(1L));
     }
 
     @Test
@@ -59,13 +59,12 @@ public class LogRepositoryTest {
     }
 
     @Test
-    public void show_(){
-    }
-
-    @Test
     public void test_get_all_logs_with_null() {
-        Page<Log> logPage = logRepository.getByUsernameAndCreateTimeBetween("", null, null, pageable);
+        Page<Log> logPage = logRepository.getByUsernameAndCreateTimeBetween("",
+                null,
+                null,
+                pageable);
         assertNotNull(logPage);
-//        assertThat(logPage.getTotalElements(), is(2));
+        assertThat(logPage.getTotalElements(), is((long) logRepository.findAll().size()));
     }
 }

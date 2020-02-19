@@ -3,6 +3,7 @@ package com.hy.jame.simpledemo.repository;
 import com.hy.jame.simpledemo.domain.Log;
 import com.hy.jame.springdatajpaplus.annotation.Between;
 import com.hy.jame.springdatajpaplus.annotation.Dynamic;
+import com.hy.jame.springdatajpaplus.annotation.NotEmpty;
 import com.hy.jame.springdatajpaplus.annotation.NotNull;
 import com.hy.jame.springdatajpaplus.repository.JpaPlusRepository;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ public interface LogRepository extends JpaPlusRepository<Log, Integer> {
 //    Page<Log> getByUsernameAndCreateTimeBetween(String username, Date start, Date end, Pageable pageable);
 
     @Dynamic
-    Page<Log> getByUsernameAndCreateTimeBetween(@NotNull String username,
+    Page<Log> getByUsernameAndCreateTimeBetween(@NotEmpty String username,
                                                 @Between("createTime") @NotNull Date start,
                                                 @Between("createTime") @NotNull Date end,
                                                 Pageable pageable);
