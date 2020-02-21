@@ -28,8 +28,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!--        <dependency>-->
+        <!--            <groupId>com.hy.jame</groupId>-->
+        <!--            <artifactId>spring-data-jpa-plus</artifactId>-->
+        <!--            <version>1.0.0</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>com.hy.jame</groupId>
+            <groupId>io.github.hyzhan43</groupId>
             <artifactId>spring-data-jpa-plus</artifactId>
             <version>1.0.0</version>
         </dependency>

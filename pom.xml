@@ -3,14 +3,37 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.hy.jame</groupId>
+    <groupId>io.github.hyzhan43</groupId>
     <artifactId>spring-data-jpa-plus</artifactId>
     <version>1.0.0</version>
     <name>spring-data-jpa-plus</name>
-    <description>Demo project for Spring Boot</description>
+    <description>this is spring data jpa extend</description>
+    <url>https://github.com/hyzhan43/spring-data-jpa-plus</url>
+
+    <developers>
+        <developer>
+            <name>HyJame</name>
+            <email>1063523767@qq.com</email>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/hyzhan43/spring-data-jpa-plus</url>
+        <connection>https://github.com/hyzhan43/spring-data-jpa-plus.git</connection>
+        <developerConnection>https://github.com/hyzhan43/spring-data-jpa-plus</developerConnection>
+    </scm>
 
     <properties>
         <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -50,8 +73,22 @@
         </dependency>
     </dependencies>
 
+    <!--定义snapshots库和releases库的nexus地址-->
+    <distributionManagement>
+        <snapshotRepository>
+            <!--oss需要对应到settings.xml下的service的id-->
+            <id>oss</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>oss</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
+            <!--编译插件-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -59,6 +96,52 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+
+            <!--生产源码文件插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--生产javadoc插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--gpg加密插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
