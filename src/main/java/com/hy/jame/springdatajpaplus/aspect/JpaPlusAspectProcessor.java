@@ -8,13 +8,16 @@ import com.hy.jame.springdatajpaplus.utils.Log;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ import java.util.Optional;
  */
 public class JpaPlusAspectProcessor {
 
-    JpaPlusDynamicManager jpaPlusDynamicManager;
+    private JpaPlusDynamicManager jpaPlusDynamicManager;
 
     public static JpaPlusAspectProcessor create() {
         return new JpaPlusAspectProcessor();
@@ -38,8 +41,6 @@ public class JpaPlusAspectProcessor {
     @SuppressWarnings("unchecked")
     public Object handle(ProceedingJoinPoint joinPoint) {
         jpaPlusDynamicManager = new JpaPlusDynamicManager();
-
-        JpaPlusRepository jpaPlusRepository = (JpaPlusRepository) joinPoint.getThis();
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 
@@ -50,13 +51,13 @@ public class JpaPlusAspectProcessor {
         // 参数值
         Object[] argValues = joinPoint.getArgs();
 
-        Method method = methodSignature.getMethod();
-
-        Class returnClazz = method.getReturnType();
+        Class returnClazz = methodSignature.getMethod().getReturnType();
 
         Object result = null;
 
         Specification specification = getSpecification(argNames, argValues, parameters);
+
+        JpaPlusRepository jpaPlusRepository = (JpaPlusRepository) joinPoint.getThis();
 
         // 返回值 是否是 List
         if (returnClazz.isAssignableFrom(List.class)) {
@@ -79,64 +80,72 @@ public class JpaPlusAspectProcessor {
      */
     private Specification getSpecification(String[] argNames, Object[] argValues, Parameter[] parameters) {
         return (root, criteriaQuery, criteriaBuilder) -> {
-            //用于暂时存放查询条件的集合
-            List<Predicate> predicatesList = new ArrayList<>();
-
-            for (int i = 0; i < argNames.length; i++) {
-
-                Object argValue = argValues[i];
-                String argName = argNames[i];
-                Parameter parameter = parameters[i];
-
-                if (argValue instanceof Pageable) {
-                    continue;
-                }
-
-                if (parameter.isAnnotationPresent(Between.class)) {
-                    Between between = parameter.getAnnotation(Between.class);
-                    argName = between.value();
-
-                    Path namePath = root.get(argName);
-
-                    i++;
-                    Parameter nextParameter = parameters[i];
-                    Comparable nextArgValue = (Comparable) argValues[i];
-
-                    if (hasIgnoreConditions(argName, argValue, parameter) || hasIgnoreConditions(argName, nextArgValue, nextParameter)) {
-                        continue;
-                    }
-
-                    @SuppressWarnings("unchecked")
-                    Predicate predicate = criteriaBuilder.between(namePath, (Comparable) argValue, nextArgValue);
-                    predicatesList.add(predicate);
-                } else if (parameter.isAnnotationPresent(Like.class)) {
-
-                    if (hasIgnoreConditions(argName, argValue, parameter)) {
-                        continue;
-                    }
-
-                    Path namePath = root.get(argName);
-
-                    @SuppressWarnings("unchecked")
-                    Predicate predicate = criteriaBuilder.like(namePath, (String) argValue);
-                    predicatesList.add(predicate);
-                } else {
-
-                    if (hasIgnoreConditions(argName, argValue, parameter)) {
-                        continue;
-                    }
-
-                    Path namePath = root.get(argName);
-                    Predicate predicate = criteriaBuilder.equal(namePath, argValue);
-                    predicatesList.add(predicate);
-                }
-            }
+            List<Predicate> predicatesList = parser(argNames, argValues, parameters, root, criteriaBuilder);
 
             //最终将查询条件拼好然后return
             Predicate[] predicates = new Predicate[predicatesList.size()];
             return criteriaBuilder.and(predicatesList.toArray(predicates));
         };
     }
+
+    private List<Predicate> parser(String[] argNames,
+                                   Object[] argValues,
+                                   Parameter[] parameters,
+                                   Root root,
+                                   CriteriaBuilder criteriaBuilder) {
+
+        //用于暂时存放查询条件的集合
+        List<Predicate> predicatesList = new ArrayList<>();
+        for (int i = 0; i < argNames.length; i++) {
+
+            Object argValue = argValues[i];
+            String argName = argNames[i];
+            Parameter parameter = parameters[i];
+
+            if (argValue instanceof Pageable) {
+                continue;
+            }
+
+            if (parameter.isAnnotationPresent(Between.class)) {
+                Between between = parameter.getAnnotation(Between.class);
+                // 根据 Between 指定的 value, 为参数名
+                argName = between.value();
+
+                Path namePath = root.get(argName);
+
+                i++;
+                Parameter nextParameter = parameters[i];
+                Comparable nextArgValue = (Comparable) argValues[i];
+
+                if (hasIgnoreConditions(argName, argValue, parameter) || hasIgnoreConditions(argName, nextArgValue, nextParameter)) {
+                    continue;
+                }
+
+                @SuppressWarnings("unchecked")
+                Predicate predicate = criteriaBuilder.between(namePath, (Comparable) argValue, nextArgValue);
+                predicatesList.add(predicate);
+                continue;
+            }
+
+            if (hasIgnoreConditions(argName, argValue, parameter)) {
+                continue;
+            }
+
+            Path namePath = root.get(argName);
+
+            Predicate predicate;
+            if (parameter.isAnnotationPresent(Like.class)) {
+                predicate = criteriaBuilder.like(namePath, (String) argValue);
+            } else {
+                predicate = criteriaBuilder.equal(namePath, argValue);
+            }
+
+            predicatesList.add(predicate);
+        }
+
+        return predicatesList;
+    }
+
 
     /**
      * 判断是否有 自定义注解 验证器

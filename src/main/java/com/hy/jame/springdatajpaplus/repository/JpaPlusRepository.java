@@ -12,4 +12,5 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface JpaPlusRepository<T, ID> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 
+
 }
